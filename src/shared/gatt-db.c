@@ -2181,6 +2181,10 @@ bool gatt_db_attribute_write(struct gatt_db_attribute *attrib, uint16_t offset,
 	if (!attrib || (!func && attrib->write_func))
 		return false;
 
+	/* Nothing to write just skip */
+	if (len == 0)
+		goto done;
+	
 	if (attrib->write_func) {
 		struct pending_write *p;
 
@@ -2215,10 +2219,6 @@ bool gatt_db_attribute_write(struct gatt_db_attribute *attrib, uint16_t offset,
 							att, attrib->user_data);
 		return true;
 	}
-
-	/* Nothing to write just skip */
-	if (len == 0)
-		goto done;
 
 	/* For values stored in db allocate on demand */
 	if (!attrib->value || offset >= attrib->value_len ||
